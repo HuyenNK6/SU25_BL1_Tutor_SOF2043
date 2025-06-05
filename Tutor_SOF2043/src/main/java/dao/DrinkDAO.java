@@ -18,7 +18,8 @@ public class DrinkDAO {
                        SELECT  [Id],[Name],[UnitPrice],[Discount]
                              ,[Image],[Available] ,[CategoryId]
                          FROM [PolyCafe].[dbo].[Drinks]
-                       """;
+                       """; 
+    //Cách 1: xử lý categoryID -> name -> Join bảng vs Category
     String createSql = """
                        INSERT INTO [dbo].[Drinks]
                                   ([Id],[Name] ,[UnitPrice]

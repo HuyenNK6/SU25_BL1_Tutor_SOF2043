@@ -4,17 +4,32 @@
  */
 package ui;
 
+import dao.CategoryDAO;
+import dao.DrinkDAO;
+import entity.Category;
+import entity.Drink;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Huyen
  */
 public class DrinkManagerJFrame extends javax.swing.JFrame {
 
+    DrinkDAO drinkDao= new DrinkDAO();
+    List <Drink> lstDrinks = new ArrayList<>();
+    CategoryDAO categoryDao = new CategoryDAO();
+    List <Category> lstCategories = new ArrayList<>();
     /**
      * Creates new form DrinkManagerJFrame
      */
     public DrinkManagerJFrame() {
         initComponents();
+        fillToTable();
+        fillToCombobox();
     }
 
     /**
@@ -69,6 +84,11 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
                 "Id", "Name", "Image", "Unitprice", "Discount", "Status", "Category"
             }
         ));
+        tblDrinks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDrinksMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDrinks);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Information"));
@@ -277,6 +297,74 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
+    private void tblDrinksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDrinksMouseClicked
+        // TODO add your handling code here:
+        int indexRow = tblDrinks.getSelectedRow();
+        this.setForm(indexRow);
+    }//GEN-LAST:event_tblDrinksMouseClicked
+     //load dữ liệu từ bảng Drink lên tblDrinks
+     private void fillToTable(){
+         DefaultTableModel model= (DefaultTableModel) tblDrinks.getModel();
+         model.setRowCount(0); //mục đích là trước mỗi lần add dữ liệu thì table sẽ xóa sạch dữ liệu
+         //lấy danh sách Drink từ bên Dao
+         lstDrinks = drinkDao.getAll();
+         //duyệt list Drink => add vào bảng
+         for (Drink drink : lstDrinks) {
+             Object[] rowData= {
+                 drink.getId(),
+                 drink.getName(),
+                 drink.getImage(),
+                 drink.getUnitPrice(),
+                 drink.getDiscount(),
+                 drink.isAvailable() ? "Available" : "Out of stock",
+                 //drink.getCategoryId() : ID
+                 //categoryDao.findById(drink.getCategoryId()): tìm kiếm đối tượng category theo ID
+                 //=> trả về 1 đối tượng Category
+                 categoryDao.findById(drink.getCategoryId()).getName()
+             };
+             model.addRow(rowData);
+         }
+     }
+     
+     //lấy dữ liệu từ dòng được chọn trong bảng để set lên trên form
+     private void setForm(int indexRow){
+         //1. lấy đối tượng từ trong bảng đc chọn
+         //lstDrinks.get(vị trí dòng được chọn)
+         Drink drink = lstDrinks.get(indexRow);
+         //2. set dữ liệu lên form
+         //text field
+         txtId.setText(drink.getId());
+         txtName.setText(drink.getName());
+         txtImage.setText(drink.getImage());
+         txtUnitPrice.setText(String.valueOf(drink.getUnitPrice()));
+         txtDiscount.setText(String.valueOf(drink.getDiscount()));
+         //radio button => status  => drink.isAvailable()=> true/false
+         //true - available (có sẵn) // false - out of stock (hết hàng)
+//         if(drink.isAvailable()){
+//             rdoAvailable.setSelected(true);
+//         }else{
+//             rdoOutOfStock.setSelected(true);
+//         }
+         rdoAvailable.setSelected(drink.isAvailable());//true //false
+         rdoOutOfStock.setSelected(!drink.isAvailable());//false //true
+         
+         //combobox
+         Category cate = categoryDao.findById(drink.getCategoryId());
+         cboCategory.setSelectedItem(cate.getName());
+     }
+     //load dữ liệu từ bảng Category lên combobox
+     
+     private void fillToCombobox(){
+         DefaultComboBoxModel model = (DefaultComboBoxModel) cboCategory.getModel();
+         model.removeAllElements(); //làm mới lại
+         //lấy list từ bên dao
+         lstCategories = categoryDao.getAll();
+         //add vào combobox
+         for (Category cate : lstCategories) {
+             model.addElement(cate.getName());
+         }
+     }
+     
     /**
      * @param args the command line arguments
      */
@@ -343,4 +431,6 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
+
+
 }
