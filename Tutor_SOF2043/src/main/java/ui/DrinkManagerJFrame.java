@@ -19,10 +19,11 @@ import javax.swing.table.DefaultTableModel;
  */
 public class DrinkManagerJFrame extends javax.swing.JFrame {
 
-    DrinkDAO drinkDao= new DrinkDAO();
-    List <Drink> lstDrinks = new ArrayList<>();
+    DrinkDAO drinkDao = new DrinkDAO();
+    List<Drink> lstDrinks = new ArrayList<>();
     CategoryDAO categoryDao = new CategoryDAO();
-    List <Category> lstCategories = new ArrayList<>();
+    List<Category> lstCategories = new ArrayList<>();
+
     /**
      * Creates new form DrinkManagerJFrame
      */
@@ -313,97 +314,107 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         System.out.println(getDataForm().toString());
         Drink drink = getDataForm();
         int result = drinkDao.create(drink); //nếu muốn kiểm tra số bản ghi đc thực hiện
-        System.out.println("Kết quả bản ghi được thực hiện: "+ result);
+        System.out.println("Kết quả bản ghi được thực hiện: " + result);
         fillToTable();
     }//GEN-LAST:event_btnAddActionPerformed
-     //load dữ liệu từ bảng Drink lên tblDrinks
-     private void fillToTable(){
-         DefaultTableModel model= (DefaultTableModel) tblDrinks.getModel();
-         model.setRowCount(0); //mục đích là trước mỗi lần add dữ liệu thì table sẽ xóa sạch dữ liệu
-         //lấy danh sách Drink từ bên Dao
-         lstDrinks = drinkDao.getAll();
-         //duyệt list Drink => add vào bảng
-         for (Drink drink : lstDrinks) {
-             Object[] rowData= {
-                 drink.getId(),
-                 drink.getName(),
-                 drink.getImage(),
-                 drink.getUnitPrice(),
-                 drink.getDiscount(),
-                 drink.isAvailable() ? "Available" : "Out of stock",
-                 //drink.getCategoryId() : ID
-                 //categoryDao.findById(drink.getCategoryId()): tìm kiếm đối tượng category theo ID
-                 //=> trả về 1 đối tượng Category
-                 categoryDao.findById(drink.getCategoryId()).getName()
-             };
-             model.addRow(rowData);
-         }
-     }
-     
-     //lấy dữ liệu từ dòng được chọn trong bảng để set lên trên form
-     private void setForm(int indexRow){
-         //1. lấy đối tượng từ trong bảng đc chọn
-         //lstDrinks.get(vị trí dòng được chọn)
-         Drink drink = lstDrinks.get(indexRow);
-         //2. set dữ liệu lên form
-         //text field
-         txtId.setText(drink.getId());
-         txtName.setText(drink.getName());
-         txtImage.setText(drink.getImage());
-         txtUnitPrice.setText(String.valueOf(drink.getUnitPrice()));
-         txtDiscount.setText(String.valueOf(drink.getDiscount()));
-         //radio button => status  => drink.isAvailable()=> true/false
-         //true - available (có sẵn) // false - out of stock (hết hàng)
+    //load dữ liệu từ bảng Drink lên tblDrinks
+
+    private void fillToTable() {
+        DefaultTableModel model = (DefaultTableModel) tblDrinks.getModel();
+        model.setRowCount(0); //mục đích là trước mỗi lần add dữ liệu thì table sẽ xóa sạch dữ liệu
+        //lấy danh sách Drink từ bên Dao
+        lstDrinks = drinkDao.getAll();
+        //duyệt list Drink => add vào bảng
+        for (Drink drink : lstDrinks) {
+            Object[] rowData = {
+                drink.getId(),
+                drink.getName(),
+                drink.getImage(),
+                drink.getUnitPrice(),
+                drink.getDiscount(),
+                drink.isAvailable() ? "Available" : "Out of stock",
+                //drink.getCategoryId() : ID
+                //categoryDao.findById(drink.getCategoryId()): tìm kiếm đối tượng category theo ID
+                //=> trả về 1 đối tượng Category
+                categoryDao.findById(drink.getCategoryId()).getName()
+            };
+            model.addRow(rowData);
+        }
+    }
+
+    //lấy dữ liệu từ dòng được chọn trong bảng để set lên trên form
+    private void setForm(int indexRow) {
+        //1. lấy đối tượng từ trong bảng đc chọn
+        //lstDrinks.get(vị trí dòng được chọn)
+        Drink drink = lstDrinks.get(indexRow);
+        //2. set dữ liệu lên form
+        //text field
+        txtId.setText(drink.getId());
+        txtName.setText(drink.getName());
+        txtImage.setText(drink.getImage());
+        txtUnitPrice.setText(String.valueOf(drink.getUnitPrice()));
+        txtDiscount.setText(String.valueOf(drink.getDiscount()));
+        //radio button => status  => drink.isAvailable()=> true/false
+        //true - available (có sẵn) // false - out of stock (hết hàng)
 //         if(drink.isAvailable()){
 //             rdoAvailable.setSelected(true);
 //         }else{
 //             rdoOutOfStock.setSelected(true);
 //         }
-         rdoAvailable.setSelected(drink.isAvailable());//true //false
-         rdoOutOfStock.setSelected(!drink.isAvailable());//false //true
-         
-         //combobox
-         Category cate = categoryDao.findById(drink.getCategoryId());
-         System.out.println(cate.toString());
-         cboCategory.setSelectedItem(cate);
-     }
-     
-     //load dữ liệu từ bảng Category lên combobox
-     private void fillToCombobox(){
-         DefaultComboBoxModel model = (DefaultComboBoxModel) cboCategory.getModel();
-         model.removeAllElements(); //làm mới lại
-         //lấy list từ bên dao
-         lstCategories = categoryDao.getAll();
-         //add vào combobox
-         for (Category cate : lstCategories) {
+        rdoAvailable.setSelected(drink.isAvailable());//true //false
+        rdoOutOfStock.setSelected(!drink.isAvailable());//false //true
+
+        //combobox
+        //Cách 1:
+        Category cate = categoryDao.findById(drink.getCategoryId()); //đúng
+        System.out.println(cate.toString());
+        cboCategory.setSelectedItem(cate);//
+        //Cách 2:
+//         for (Category cate : lstCategories) {
+//            if (cate.getId().equals(drink.getCategoryId())) {
+//                cboCategory.setSelectedItem(cate); 
+//                break;
+//            }
+//        }
+
+    }
+
+    //load dữ liệu từ bảng Category lên combobox
+    private void fillToCombobox() {
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboCategory.getModel();
+        model.removeAllElements(); //làm mới lại
+        //lấy list từ bên dao
+        lstCategories = categoryDao.getAll();
+        //add vào combobox
+        for (Category cate : lstCategories) {
 //             model.addElement(cate.getName());
-             model.addElement(cate);
-         }
-     }
-     
-     //Lấy dữ liệu từ trên form Information -> thông tin của đối tượng Drink
-     private Drink getDataForm(){
-         Drink drink = new Drink();
-         //set thông tin cho đối tượng
-         //text field
-         drink.setId(txtId.getText());
-         drink.setName(txtName.getText());
-         drink.setImage(txtImage.getText());
-         drink.setUnitPrice(Double.parseDouble(txtUnitPrice.getText()));
-         drink.setDiscount(Double.parseDouble(txtDiscount.getText()));
-         //radio button
-         //cách khác: if else/ toán tử 3 ngôi
-         //rdoAvailable.isSelected() => true / false 
-         //- rdoAvailable được chọn => rdoAvailable.isSelected() => true
-         //- rdoOutOfStock được chọn => rdoAvailable.isSelected() => false
-         drink.setAvailable(rdoAvailable.isSelected());
-         //combobox
-         Category cate = (Category) cboCategory.getSelectedItem(); //lấy cả đối tượng về từ cbo
-         //giả sử: combobox- getName-> sql tìm kiếm theo name => phải đảm bảo name là unique - duy nhất
-         drink.setCategoryId(cate.getId());
-         return drink;
-     }
-     
+            model.addElement(cate); //nhớ override toString() nhé!
+        }
+    }
+
+    //Lấy dữ liệu từ trên form Information -> thông tin của đối tượng Drink
+    private Drink getDataForm() {
+        Drink drink = new Drink();
+        //set thông tin cho đối tượng
+        //text field
+        drink.setId(txtId.getText());
+        drink.setName(txtName.getText());
+        drink.setImage(txtImage.getText());
+        drink.setUnitPrice(Double.parseDouble(txtUnitPrice.getText()));
+        drink.setDiscount(Double.parseDouble(txtDiscount.getText()));
+        //radio button
+        //cách khác: if else/ toán tử 3 ngôi
+        //rdoAvailable.isSelected() => true / false 
+        //- rdoAvailable được chọn => rdoAvailable.isSelected() => true
+        //- rdoOutOfStock được chọn => rdoAvailable.isSelected() => false
+        drink.setAvailable(rdoAvailable.isSelected());
+        //combobox
+        Category cate = (Category) cboCategory.getSelectedItem(); //lấy cả đối tượng về từ cbo
+        //giả sử: combobox- getName-> sql tìm kiếm theo name => phải đảm bảo name là unique - duy nhất
+        drink.setCategoryId(cate.getId());
+        return drink;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -470,6 +481,5 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtUnitPrice;
     // End of variables declaration//GEN-END:variables
-
 
 }

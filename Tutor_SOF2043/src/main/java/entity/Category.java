@@ -10,10 +10,11 @@ import lombok.*;
  *
  * @author Huyen
  */
-@Getter
-@Setter
+//@Getter
+//@Setter
+//@ToString
+@Data // @Getter, @Setter, @ToString, @EqualsAndHashCode, @RequiredArgsConstructor!
 @Builder
-@ToString
 //@Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,9 +23,9 @@ public class Category {
     private String id;
     private String name;
 
-//    @Override
-//    public String toString() {
-//        return name;
-//    }
+    @Override
+    public String toString() {
+        return name;
+    }
     
 }
