@@ -20,6 +20,7 @@ public class DrinkDAO {
                          FROM [PolyCafe].[dbo].[Drinks]
                        """; 
     //Cách 1: xử lý categoryID -> name -> Join bảng vs Category
+    //nếu ID tự tăng  -> insert không?
     String createSql = """
                        INSERT INTO [dbo].[Drinks]
                                   ([Id],[Name] ,[UnitPrice]

@@ -16,7 +16,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Drink {
 
-    private String id;
+    private String id;//giả sử int -> trong db lại là id tự tăng-> check DB??
     private String name;
     @Builder.Default
     private String image = "product.png";
@@ -24,4 +24,5 @@ public class Drink {
     private double discount;
     private boolean available;
     private String categoryId;
+    
 }

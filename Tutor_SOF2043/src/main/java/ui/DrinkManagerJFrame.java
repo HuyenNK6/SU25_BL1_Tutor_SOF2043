@@ -188,6 +188,11 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         jLabel1.setText("QUẢN LÝ ĐỒ UỐNG");
 
         btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setText("Update");
 
@@ -302,6 +307,15 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         int indexRow = tblDrinks.getSelectedRow();
         this.setForm(indexRow);
     }//GEN-LAST:event_tblDrinksMouseClicked
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+        System.out.println(getDataForm().toString());
+        Drink drink = getDataForm();
+        int result = drinkDao.create(drink); //nếu muốn kiểm tra số bản ghi đc thực hiện
+        System.out.println("Kết quả bản ghi được thực hiện: "+ result);
+        fillToTable();
+    }//GEN-LAST:event_btnAddActionPerformed
      //load dữ liệu từ bảng Drink lên tblDrinks
      private void fillToTable(){
          DefaultTableModel model= (DefaultTableModel) tblDrinks.getModel();
@@ -350,10 +364,11 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
          
          //combobox
          Category cate = categoryDao.findById(drink.getCategoryId());
-         cboCategory.setSelectedItem(cate.getName());
+         System.out.println(cate.toString());
+         cboCategory.setSelectedItem(cate);
      }
-     //load dữ liệu từ bảng Category lên combobox
      
+     //load dữ liệu từ bảng Category lên combobox
      private void fillToCombobox(){
          DefaultComboBoxModel model = (DefaultComboBoxModel) cboCategory.getModel();
          model.removeAllElements(); //làm mới lại
@@ -361,8 +376,32 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
          lstCategories = categoryDao.getAll();
          //add vào combobox
          for (Category cate : lstCategories) {
-             model.addElement(cate.getName());
+//             model.addElement(cate.getName());
+             model.addElement(cate);
          }
+     }
+     
+     //Lấy dữ liệu từ trên form Information -> thông tin của đối tượng Drink
+     private Drink getDataForm(){
+         Drink drink = new Drink();
+         //set thông tin cho đối tượng
+         //text field
+         drink.setId(txtId.getText());
+         drink.setName(txtName.getText());
+         drink.setImage(txtImage.getText());
+         drink.setUnitPrice(Double.parseDouble(txtUnitPrice.getText()));
+         drink.setDiscount(Double.parseDouble(txtDiscount.getText()));
+         //radio button
+         //cách khác: if else/ toán tử 3 ngôi
+         //rdoAvailable.isSelected() => true / false 
+         //- rdoAvailable được chọn => rdoAvailable.isSelected() => true
+         //- rdoOutOfStock được chọn => rdoAvailable.isSelected() => false
+         drink.setAvailable(rdoAvailable.isSelected());
+         //combobox
+         Category cate = (Category) cboCategory.getSelectedItem(); //lấy cả đối tượng về từ cbo
+         //giả sử: combobox- getName-> sql tìm kiếm theo name => phải đảm bảo name là unique - duy nhất
+         drink.setCategoryId(cate.getId());
+         return drink;
      }
      
     /**
