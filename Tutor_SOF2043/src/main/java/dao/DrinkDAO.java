@@ -64,7 +64,7 @@ public class DrinkDAO {
             drink.getImage(),
             drink.isAvailable(),
             drink.getCategoryId(),
-            drink.getId(),
+            drink.getId()
         };
         return XJdbc.executeUpdate(updateSql, values);// trả về số lượng bản ghi đã thực hiện
     }

@@ -196,8 +196,18 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         });
 
         btnUpdate.setText("Update");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Sort by Unit price");
 
@@ -308,7 +318,8 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         int indexRow = tblDrinks.getSelectedRow();
         this.setForm(indexRow);
     }//GEN-LAST:event_tblDrinksMouseClicked
-
+        //=> có confirm trước khi xóa
+        //=> thông báo kết quả
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         // TODO add your handling code here:
         System.out.println(getDataForm().toString());
@@ -317,6 +328,27 @@ public class DrinkManagerJFrame extends javax.swing.JFrame {
         System.out.println("Kết quả bản ghi được thực hiện: " + result);
         fillToTable();
     }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        //1. tạo đối tượng mới với thông tin từ trên form
+        Drink drink = getDataForm();
+        //2. cập nhật thông tin đối tượng
+        drinkDao.update(drink);
+        //3. load lại dữ liệu vào bảng
+        fillToTable();
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        //1. cần có id của đối tượng muốn xóa
+        String id = txtId.getText();
+        //2. xóa trong DB
+        drinkDao.delete(id);
+        //3. load lại dữ liệu vào bảng
+        fillToTable();
+       
+    }//GEN-LAST:event_btnDeleteActionPerformed
     //load dữ liệu từ bảng Drink lên tblDrinks
 
     private void fillToTable() {

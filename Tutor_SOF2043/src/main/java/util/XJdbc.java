@@ -23,7 +23,7 @@ public class XJdbc {
      */
     public static Connection openConnection() {
         var driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        var dburl = "jdbc:sqlserver://localhost;database=PolyCafe;encrypt=true;trustServerCertificate=true;";
+        var dburl = "jdbc:sqlserver://localhost;database=DB_DAM_Sach_NXB;encrypt=true;trustServerCertificate=true;";
         var username = "sa";
         var password = "123";
         try {
