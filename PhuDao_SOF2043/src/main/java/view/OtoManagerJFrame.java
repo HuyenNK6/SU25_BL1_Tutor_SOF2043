@@ -4,10 +4,13 @@
  */
 package view;
 
+import entity.LoaiOtoVinfast;
 import entity.OtoVinfast;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
+import repository.LoaiOtoRepository;
 import repository.OtoVinfastRepository;
 
 /**
@@ -17,12 +20,15 @@ import repository.OtoVinfastRepository;
 public class OtoManagerJFrame extends javax.swing.JFrame {
     List<OtoVinfast> lstOto = new ArrayList<>();
     OtoVinfastRepository otoRepo = new OtoVinfastRepository();
+    List<LoaiOtoVinfast>  lstLoai = new ArrayList<>();
+    LoaiOtoRepository loaiRepo = new LoaiOtoRepository();
     /**
      * Creates new form OtoManagerJFrame
      */
     public OtoManagerJFrame() {
         initComponents();
-        fillToTable();//gọi load
+        fillToTable();//gọi load bảng
+        fillToCombobox();
     }
     //load dữ liệu lên bảng
     private void fillToTable(){
@@ -39,7 +45,9 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                 oto.getMauSac(),
                 oto.getNamSanXuat(),
                 oto.getGiaBan(),
-                oto.getIdLoai(),
+                //oto.getIdLoai() => lấy id của loại xe
+                //loaiRepo.findById(oto.getIdLoai()) => trả về 1 đối tượng loại xe
+                loaiRepo.findById(oto.getIdLoai()).getTen(),
                 oto.getTrangThai()== 1? "Đang bán" : "Ngừng bán"
             };
             model.addRow(rowData);
@@ -63,6 +71,19 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         rdoDangBan.setSelected(oto.getTrangThai()==1);
         rdoNgungBan.setSelected(oto.getTrangThai()==0);
         //combobox -> buổi sau
+        LoaiOtoVinfast loai = loaiRepo.findById(oto.getIdLoai());
+        cboLoaiXe.setSelectedItem(loai);//set cả đối tượng
+    }
+    //load dữ liệu lên combobox
+    private void fillToCombobox(){
+        DefaultComboBoxModel model = (DefaultComboBoxModel) cboLoaiXe.getModel();
+        model.removeAllElements();
+        //lấy danh sách
+        lstLoai = loaiRepo.getAll();
+        //add vào combobox
+        for (LoaiOtoVinfast loai : lstLoai) {
+            model.addElement(loai);//add cả đối tượng vào combobox
+        }
     }
     
     /**
@@ -102,7 +123,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         tblOto = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnXoa = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -265,7 +286,12 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
 
         jButton3.setText("Sửa");
 
-        jButton4.setText("Xóa");
+        btnXoa.setText("Xóa");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXoaActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Sắp xếp theo năm sản xuất");
 
@@ -286,7 +312,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                                 .addGap(29, 29, 29)
                                 .addComponent(jButton3)
                                 .addGap(29, 29, 29)
-                                .addComponent(jButton4)))
+                                .addComponent(btnXoa)))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -312,7 +338,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton3)
-                    .addComponent(jButton4)
+                    .addComponent(btnXoa)
                     .addComponent(jButton5))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -331,6 +357,14 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
     private void rdoDangBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoDangBanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_rdoDangBanActionPerformed
+
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+        // TODO add your handling code here:
+        //bổ sung confirm trước khi xóa
+        int id = Integer.parseInt(txtId.getText());
+        otoRepo.delete(id);
+        this.fillToTable();
+    }//GEN-LAST:event_btnXoaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -368,12 +402,12 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnXoa;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cboLoaiXe;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;

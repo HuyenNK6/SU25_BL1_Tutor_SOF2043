@@ -6,6 +6,7 @@ package repository;
 
 import entity.OtoVinfast;
 import java.util.List;
+import util.XJdbc;
 import util.XQuery;
 
 /**
@@ -20,9 +21,16 @@ public class OtoVinfastRepository {
                              ,[idloai],[trangthai]
                          FROM [DB_DAM_VinFast].[dbo].[OtoVinfast]
                        """;
+    String deleteSql = """
+                       DELETE FROM [dbo].[OtoVinfast]
+                             WHERE id = ?
+                       """;
     //lấy danh sách Oto từ DB
     public List<OtoVinfast> getAll(){
         return XQuery.getBeanList(OtoVinfast.class, getAllSql);
+    }
+    public int delete(int id){
+        return XJdbc.executeUpdate(deleteSql, id);
     }
     public static void main(String[] args) {
         //test

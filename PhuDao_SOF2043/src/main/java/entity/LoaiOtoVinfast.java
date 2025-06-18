@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
  *
  * @author Huyen
  */
-@Data
+@Data//@Getter @Setter @ToString @Equal....
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,4 +21,10 @@ public class LoaiOtoVinfast {
     private int id;
     private String ma;
     private String ten;
+
+    @Override
+    public String toString() {
+        return  ten;
+    }
+    
 }
