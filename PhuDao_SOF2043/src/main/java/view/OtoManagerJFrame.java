@@ -18,10 +18,12 @@ import repository.OtoVinfastRepository;
  * @author Huyen
  */
 public class OtoManagerJFrame extends javax.swing.JFrame {
+
     List<OtoVinfast> lstOto = new ArrayList<>();
     OtoVinfastRepository otoRepo = new OtoVinfastRepository();
-    List<LoaiOtoVinfast>  lstLoai = new ArrayList<>();
+    List<LoaiOtoVinfast> lstLoai = new ArrayList<>();
     LoaiOtoRepository loaiRepo = new LoaiOtoRepository();
+
     /**
      * Creates new form OtoManagerJFrame
      */
@@ -30,8 +32,9 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         fillToTable();//gọi load bảng
         fillToCombobox();
     }
+
     //load dữ liệu lên bảng
-    private void fillToTable(){
+    private void fillToTable() {
         DefaultTableModel model = (DefaultTableModel) tblOto.getModel();
         model.setRowCount(0);//xóa dòng trong bảng
         //lấy dữ liệu về
@@ -48,14 +51,15 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                 //oto.getIdLoai() => lấy id của loại xe
                 //loaiRepo.findById(oto.getIdLoai()) => trả về 1 đối tượng loại xe
                 loaiRepo.findById(oto.getIdLoai()).getTen(),
-                oto.getTrangThai()== 1? "Đang bán" : "Ngừng bán"
+                oto.getTrangThai() == 1 ? "Đang bán" : "Ngừng bán"
             };
             model.addRow(rowData);
         }
     }
+
     //dữ liệu được chọn trong bảng set vào form thông tin
     //indexRow: vị trí dòng được chọn trong bảng
-    private void setForm(int indexRow){
+    private void setForm(int indexRow) {
         //1. lấy thông tin dòng dc chọn -> 1 đối tượng
         OtoVinfast oto = lstOto.get(indexRow);
         //2. set dữ liệu lên form
@@ -68,14 +72,15 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         txtGiaBan.setText(String.valueOf(oto.getGiaBan()));
         //radio button -> if else
         //oto.getTrangThai()==1  => true/false
-        rdoDangBan.setSelected(oto.getTrangThai()==1);
-        rdoNgungBan.setSelected(oto.getTrangThai()==0);
+        rdoDangBan.setSelected(oto.getTrangThai() == 1);
+        rdoNgungBan.setSelected(oto.getTrangThai() == 0);
         //combobox -> buổi sau
         LoaiOtoVinfast loai = loaiRepo.findById(oto.getIdLoai());
         cboLoaiXe.setSelectedItem(loai);//set cả đối tượng
     }
+
     //load dữ liệu lên combobox
-    private void fillToCombobox(){
+    private void fillToCombobox() {
         DefaultComboBoxModel model = (DefaultComboBoxModel) cboLoaiXe.getModel();
         model.removeAllElements();
         //lấy danh sách
@@ -85,7 +90,27 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
             model.addElement(loai);//add cả đối tượng vào combobox
         }
     }
-    
+
+    //lấy dữ liệu từ trên form xuống
+    private OtoVinfast getForm() {
+        OtoVinfast oto = new OtoVinfast();
+        //lấy thông tin từ form -> get...
+        //-> set thông tin cho đối tượng => Builder -> tạo constructor tùy ý
+        //text feild
+        oto.setId(Integer.parseInt(txtId.getText())); //khi add thi ID tự tăng
+        oto.setMa(txtMa.getText());
+        oto.setTen(txtTen.getText());
+        oto.setMauSac(txtMauSac.getText());
+        oto.setNamSanXuat(Integer.parseInt(txtNSX.getText()));
+        oto.setGiaBan(Double.parseDouble(txtGiaBan.getText()));
+        //radio button
+        oto.setTrangThai(rdoDangBan.isSelected() ? 1 : 0);
+        //combobox -> lấy đối tượng từ trên cbo
+        LoaiOtoVinfast loai = (LoaiOtoVinfast) cboLoaiXe.getSelectedItem();
+        oto.setIdLoai(loai.getId());    
+        return oto;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -121,7 +146,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         rdoNgungBan = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblOto = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
+        btnThem = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         btnXoa = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -282,7 +307,12 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tblOto);
 
-        jButton2.setText("Thêm");
+        btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Sửa");
 
@@ -308,7 +338,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jButton2)
+                                .addComponent(btnThem)
                                 .addGap(29, 29, 29)
                                 .addComponent(jButton3)
                                 .addGap(29, 29, 29)
@@ -336,7 +366,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
+                    .addComponent(btnThem)
                     .addComponent(jButton3)
                     .addComponent(btnXoa)
                     .addComponent(jButton5))
@@ -350,7 +380,7 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
     private void tblOtoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOtoMouseClicked
         // TODO add your handling code here:
         //lấy vị trí dòng dc chọn
-        int indexRow= tblOto.getSelectedRow();
+        int indexRow = tblOto.getSelectedRow();
         this.setForm(indexRow);
     }//GEN-LAST:event_tblOtoMouseClicked
 
@@ -365,6 +395,14 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
         otoRepo.delete(id);
         this.fillToTable();
     }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        // TODO add your handling code here:
+        OtoVinfast oto= this.getForm();
+        //add vao csdl
+        otoRepo.create(oto);
+        this.fillToTable();
+    }//GEN-LAST:event_btnThemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -402,11 +440,11 @@ public class OtoManagerJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnThem;
     private javax.swing.JButton btnXoa;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cboLoaiXe;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;

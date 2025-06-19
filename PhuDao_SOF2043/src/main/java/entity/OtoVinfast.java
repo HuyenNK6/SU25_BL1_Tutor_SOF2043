@@ -22,7 +22,7 @@ public class OtoVinfast {
     private String ma;
     private String ten;
     private String mauSac;
-    private int namSanXuat;
+    private int namSanXuat;//ko đặt tên: namSX -> not valid
     private double giaBan;
     private int idLoai;
     private int trangThai;
